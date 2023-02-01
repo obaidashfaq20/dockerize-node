@@ -5,6 +5,8 @@ FROM node:alpine
 # Base:tag
 
 # Install dependencies
+WORKDIR /usr/app
+COPY ./ /usr/app
 RUN npm install
 
 # Run the application [Default command; Runs when the container first created]
