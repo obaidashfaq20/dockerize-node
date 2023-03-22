@@ -1,0 +1,120 @@
+Chapter 1
+Why we use Dockers
+For an instance we need redis on out local machine for development
+
+Traditional Installation
+Wget http://download.redis.io/releases/redis-4.0.11.taz.gz
+Tar xzf redis-4.0.11.tar.gz
+Cd redis-4.0.11
+Make
+src/redis-server
+
+Via docker
+Docker run -it redis
+
+Thats it, 
+
+
+Docker Ecosystem
+1. Docker Client
+2. Docker Server or alternatively called as docker daemon
+3. Docker Machine
+4. Docker Image
+5. Docker Hub
+6. Docker Compose
+
+`Image [Single file with all the deps and configs required to run a program] has multiple containers
+Container is just an instance of image
+
+Docker run hello-world
+
+Docker in the command docker client which talks to docker server [daemon] which in turns reaches out to docker hub [free service] {Repository of free public images that you can freely download and run} and downloads that image in image caches. 
+Re running that command will hit the image from image cache rather than docker hub
+Recap: (1) docker run command reaches out to docker hub (2) it grabs the image (3) creates container out of that image
+
+Chapter 2
+Docker run <image name> command
+“command” here is to override the defaults to run that specific image
+Docker run busybox echo hey there! 
+Prints out “hey there!” and terminates 
+Docker run busybox ping google.com
+Listing running containers
+Now we can use docker ps to get tin tnformation about the running containers
+To get all the containers that ever run on that machine docker ps –all
+Container Lifecycle
+Docker run  = docker create + docker start
+I- docker create <image name>
+ii - docker start -a <container id>
+[dash a argument make docker actually watch for output from the container and print it out to your terminal]
+
+Removing stopped container Docker ps –all are taking disk space to delete those containers docker system  prune
+
+Docker run container_id will run the container without logs 
+Two work arrounds 
+Run again with -a flag which attaches to STDIN, STDOUT and STDERR
+Docker logs container id
+Stopping a container
+Let’s say a container is running a while(1) or ping without stopping, we can stop/kill using
+Docker stop/kill <container_id> internally it sends SIGTERM and SIGKILL respectively
+
+Redis To Store Key Pair
+Sudo systemctl start redis/redis-server
+In new terminal window redis-cli
+Set variable value
+Get variable
+Docker image of redis to store key pair
+Docker start redis
+Now we don’t know how to aceess the redis cli of that container
+We have to find a way to run redis-server and redis-cli in same container
+docker exec -it 3eade8b9f366 redis-cli
+Exec is short for execute 
+(-it allows us to provide input to the container)
+Getting cmd access to the docker container
+Suppose you want ot execute series of commands C1, C2, C3….Cn one way to do that is 
+Docker exec -it container_id C1
+Docker exec -it container_id C2
+Docker exec -it container_id C3
+.
+.
+.
+Docker exec -it container_id Cn
+
+Docker exec -it container_id sh
+
+Create your own custom docker image
+Dockerfile => Docker-client => Docker-server => Usable Image
+
+Why do we use alpine as a base image
+We got package manager preinstalled in alpine apk alpine linux package keeper or manager
+
+The Build Process [docker build .]
+
+Creates intermediate containers take snapshot of previously created container and delete those 
+
+
+	
+docker run --name myPostgresDb -p 5050:5432 -e POSTGRES_USER=postgresUser -e POSTGRES_PASSWORD=postgresPW -e POSTGRES_DB=postgresDB -d postgres:12.13-alpine
+
+
+Chapter No 5
+Application server on one container communicating with redis on separate container
+
+Docker run 
+# Setup Network between two separate containers
+We have two steams
+1. Use Docker CLI's network feature
+2. Use Docker compose [Used frequently]
+
+Docker Compose
+Seprate CLI that gets installed along with docker
+Used to start up multiple docker containers at the same time
+Automates some of the long-winded arguments we were passing to ‘docker run’
+
+Underlaying of docker-compose yaml
+
+Redis-server: Make it using the ‘redis’ image
+Node-app: Make it using the Dockerfile in the current directory
+Map port 8081 to 8081
+
+= [Docker-compose up -d] run all the containers in the background
+= [docker-compose down] is just a teardown or destructor 
